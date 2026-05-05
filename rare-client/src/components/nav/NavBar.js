@@ -53,6 +53,7 @@ export const NavBar = ({ token, setToken, isAdmin }) => {
                 <Link to="/posts" className="navbar-item">Posts</Link>
                 <Link to="/posts/new" className="navbar-item">New Post</Link>
                 <Link to="/myposts" className="navbar-item">My Posts</Link>
+                <Link to={`/profiles/${localStorage.getItem("current_user_id")}`} className="navbar-item">My Profile</Link>
                 {isAdmin && (
                   <div className={`navbar-item has-dropdown${adminDropdownOpen ? ' is-active' : ''}`}>
                     <a className="navbar-link" onClick={(e) => { e.stopPropagation(); setAdminDropdownOpen(o => !o) }}>

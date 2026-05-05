@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rareapi.models import RareUser, DemotionQueue
-from rareapi.serializers import ProfileDetailSerializer, ProfileListSerializer, DemotionQueueSerializer
+from rareapi.serializers import ProfileDetailSerializer, ProfileListSerializer, ProfileEditSerializer, DemotionQueueSerializer
 from rareapi.services import admin_actions
 
 
@@ -96,6 +96,25 @@ def demotion_queue_list(request):
 
     queue_items = DemotionQueue.objects.select_related('admin').all()
     return Response(DemotionQueueSerializer(queue_items, many=True).data)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def edit_profile(request, pk):
+    if request.user.id != pk:
+        return Response({'error': 'Forbidden'}, status=403)
+
+    try:
+        user = RareUser.objects.get(pk=pk)
+    except RareUser.DoesNotExist:
+        return Response({'error': 'Not found'}, status=404)
+
+    serializer = ProfileEditSerializer(user, data=request.data, partial=True)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=400)
+    serializer.save()
+
+    return Response(ProfileDetailSerializer(user, context={'request': request}).data)
 
 
 @api_view(['PUT'])

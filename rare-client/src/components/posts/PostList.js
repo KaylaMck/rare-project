@@ -55,31 +55,38 @@ export const PostList = () => {
           </div>
         </div>
       </div>
-      <table className="table is-fullwidth is-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Category</th>
-            <th>Published</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredPosts.map(post => (
-            <tr key={post.id}>
-              <td>
-                <Link to={`/posts/${post.id}`}>{post.title}</Link>
+      <div className="columns is-multiline">
+        {filteredPosts.map(post => (
+          <div key={post.id} className="column is-4-desktop is-6-tablet">
+            <div className="card is-flex is-flex-direction-column" style={{ height: "100%" }}>
+              <div className="card-header">
+                <p className="card-header-title">
+                  <Link to={`/posts/${post.id}`}>{post.title}</Link>
+                </p>
                 {!post.approved && (
-                  <span className="tag is-warning ml-2">Pending Review</span>
+                  <div className="card-header-icon">
+                    <span className="tag is-warning">Pending Review</span>
+                  </div>
                 )}
-              </td>
-              <td>{post.user.username}</td>
-              <td>{post.category ? post.category.label : "—"}</td>
-              <td>{post.publication_date}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+              <div className="card-content is-flex-grow-1">
+                <p className="is-size-7 has-text-grey mb-2">
+                  By {post.user.full_name || post.user.username}
+                </p>
+                <p className="content is-size-6">{post.content_excerpt}</p>
+                {post.category && (
+                  <span className="tag is-info is-light">{post.category.label}</span>
+                )}
+              </div>
+              <footer className="card-footer">
+                <span className="card-footer-item has-text-grey is-size-7">{post.publication_date}</span>
+                <span className="card-footer-item has-text-grey is-size-7">{post.comment_count} comments</span>
+                <span className="card-footer-item has-text-grey is-size-7">{post.reaction_count} reactions</span>
+              </footer>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

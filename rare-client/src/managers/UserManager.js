@@ -47,6 +47,14 @@ export const cancelDemotionQueueItem = (id) => {
   })
 }
 
+export const updateProfile = (id, data) => {
+  return fetch(`${API}/profiles/${id}/edit`, {
+    method: "PUT",
+    headers: { ...authHeader(), "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(res => res.json())
+}
+
 export const uploadProfileImage = (id, formData) => {
   return fetch(`${API}/profiles/${id}/image`, {
     method: "PUT",

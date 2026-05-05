@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { getProfile, uploadProfileImage } from "../../managers/UserManager"
 import { subscribeToUser, unsubscribeFromUser } from "../../managers/SubscriptionManager"
 
@@ -7,6 +7,7 @@ const DEFAULT_AVATAR = "https://bulma.io/assets/images/placeholders/128x128.png"
 
 export const UserProfileDetail = () => {
   const { userId } = useParams()
+  const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const currentUserId = localStorage.getItem("current_user_id")
   const fileInputRef = useRef(null)
@@ -98,6 +99,14 @@ export const UserProfileDetail = () => {
           <Link to={`/profiles/${userId}/posts`} className="button is-link">
             View Posts
           </Link>
+          {String(userId) === String(currentUserId) && (
+            <button
+              className="button is-info ml-2"
+              onClick={() => navigate(`/profiles/${userId}/edit`)}
+            >
+              Edit Profile
+            </button>
+          )}
           {String(userId) !== String(currentUserId) && (
             profile.is_subscribed ? (
               <button

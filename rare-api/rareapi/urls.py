@@ -10,7 +10,7 @@ from .views.post_views import (
 from .views.category_views import category_list, category_detail
 from .views.comment_views import post_comments, comment_detail
 from .views.user_views import (
-    profile_list, profile_detail, deactivate_user, reactivate_user,
+    profile_list, profile_detail, edit_profile, deactivate_user, reactivate_user,
     change_user_type, upload_profile_image,
     demotion_queue_list, cancel_demotion_queue_item,
 )
@@ -54,6 +54,7 @@ urlpatterns = [
     # Profiles
     path('profiles', profile_list, name='profile_list'),
     path('profiles/<int:pk>', profile_detail, name='profile_detail'),
+    path('profiles/<int:pk>/edit', edit_profile, name='edit_profile'),
     path('profiles/<int:pk>/image', upload_profile_image, name='upload_profile_image'),
     path('profiles/<int:pk>/deactivate', deactivate_user, name='deactivate_user'),
     path('profiles/<int:pk>/reactivate', reactivate_user, name='reactivate_user'),

@@ -5,9 +5,14 @@ from rareapi.models import RareUser
 
 class UserSummarySerializer(serializers.ModelSerializer):
     """Minimal user representation for nesting inside posts, comments, etc."""
+    full_name = serializers.SerializerMethodField()
+
     class Meta:
         model = RareUser
-        fields = ['id', 'username']
+        fields = ['id', 'username', 'full_name']
+
+    def get_full_name(self, obj):
+        return f'{obj.first_name} {obj.last_name}'.strip()
 
 
 class ProfileDetailSerializer(serializers.ModelSerializer):
@@ -22,8 +27,8 @@ class ProfileDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = RareUser
         fields = [
-            'id', 'full_name', 'username', 'email',
-            'profile_image_url', 'created_on', 'user_type',
+            'id', 'full_name', 'first_name', 'last_name', 'username', 'email',
+            'bio', 'profile_image_url', 'created_on', 'user_type',
             'is_subscribed', 'subscriber_count', 'post_count',
         ]
 
@@ -81,3 +86,18 @@ class RegisterSerializer(serializers.ModelSerializer):
             **validated_data,
             is_active=True,
         )
+
+
+class ProfileEditSerializer(serializers.ModelSerializer):
+    """Validates profile fields the user is allowed to edit themselves."""
+    class Meta:
+        model = RareUser
+        fields = ['username', 'first_name', 'last_name', 'bio']
+
+    def validate_username(self, value):
+        qs = RareUser.objects.filter(username=value)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return value
