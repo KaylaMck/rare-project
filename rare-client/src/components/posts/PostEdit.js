@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import ReactMarkdown from "react-markdown"
 import { getPost, updatePost, uploadPostImage } from "../../managers/PostManager"
 import { getCategories } from "../../managers/CategoryManager"
 
@@ -7,6 +8,8 @@ export const PostEdit = () => {
   const { postId } = useParams()
   const [post, setPost] = useState(null)
   const [categories, setCategories] = useState([])
+  const [isPreview, setIsPreview] = useState(false)
+  const [previewContent, setPreviewContent] = useState('')
   const titleRef = useRef()
   const categoryRef = useRef()
   const fileRef = useRef()
@@ -17,6 +20,11 @@ export const PostEdit = () => {
     getPost(postId).then(setPost)
     getCategories().then(setCategories)
   }, [postId])
+
+  const handlePreviewClick = () => {
+    setPreviewContent(contentRef.current.value)
+    setIsPreview(true)
+  }
 
   const handleSave = (e) => {
     e.preventDefault()
@@ -76,9 +84,26 @@ export const PostEdit = () => {
         </div>
         <div className="field">
           <label className="label">Content</label>
-          <div className="control">
+          <div className="tabs is-boxed mb-0">
+            <ul>
+              <li className={!isPreview ? 'is-active' : ''}>
+                <a onClick={() => setIsPreview(false)}>Write</a>
+              </li>
+              <li className={isPreview ? 'is-active' : ''}>
+                <a onClick={handlePreviewClick}>Preview</a>
+              </li>
+            </ul>
+          </div>
+          <div className={`control ${isPreview ? 'is-hidden' : ''}`}>
             <textarea className="textarea" ref={contentRef} defaultValue={post.content} required />
           </div>
+          {isPreview && (
+            <div className="box content mt-0">
+              {previewContent
+                ? <ReactMarkdown>{previewContent}</ReactMarkdown>
+                : <p className="has-text-grey">Nothing to preview yet.</p>}
+            </div>
+          )}
         </div>
         <div className="buttons">
           <button className="button is-primary" type="submit">Save</button>

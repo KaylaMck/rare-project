@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
+import ReactMarkdown from "react-markdown"
 import { getPost, deletePost } from "../../managers/PostManager"
 import { getPostComments, deleteComment } from "../../managers/CommentManager"
 import { getPostReactions, addPostReaction, removePostReaction } from "../../managers/ReactionManager"
@@ -55,7 +56,7 @@ export const PostDetail = ({ isAdmin }) => {
         )}
 
         <div className="content mb-5">
-          <p>{post.content}</p>
+          <ReactMarkdown>{post.content}</ReactMarkdown>
         </div>
 
         <div className="tags mb-4">

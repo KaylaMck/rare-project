@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import ReactMarkdown from "react-markdown"
 import { createPost, uploadPostImage } from "../../managers/PostManager"
 import { getCategories } from "../../managers/CategoryManager"
 
 export const PostCreate = () => {
   const [categories, setCategories] = useState([])
   const [pendingPostId, setPendingPostId] = useState(null)
+  const [isPreview, setIsPreview] = useState(false)
+  const [previewContent, setPreviewContent] = useState('')
   const titleRef = useRef()
   const categoryRef = useRef()
   const fileRef = useRef()
@@ -15,6 +18,11 @@ export const PostCreate = () => {
   useEffect(() => {
     getCategories().then(setCategories)
   }, [])
+
+  const handlePreviewClick = () => {
+    setPreviewContent(contentRef.current.value)
+    setIsPreview(true)
+  }
 
   const handleSave = (e) => {
     e.preventDefault()
@@ -88,9 +96,26 @@ export const PostCreate = () => {
         </div>
         <div className="field">
           <label className="label">Content</label>
-          <div className="control">
+          <div className="tabs is-boxed mb-0">
+            <ul>
+              <li className={!isPreview ? 'is-active' : ''}>
+                <a onClick={() => setIsPreview(false)}>Write</a>
+              </li>
+              <li className={isPreview ? 'is-active' : ''}>
+                <a onClick={handlePreviewClick}>Preview</a>
+              </li>
+            </ul>
+          </div>
+          <div className={`control ${isPreview ? 'is-hidden' : ''}`}>
             <textarea className="textarea" ref={contentRef} required />
           </div>
+          {isPreview && (
+            <div className="box content mt-0">
+              {previewContent
+                ? <ReactMarkdown>{previewContent}</ReactMarkdown>
+                : <p className="has-text-grey">Nothing to preview yet.</p>}
+            </div>
+          )}
         </div>
         <div className="control">
           <button className="button is-primary" type="submit">Save</button>
