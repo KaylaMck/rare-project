@@ -84,6 +84,39 @@ Three-tier: React SPA → Django REST API → PostgreSQL 16 (Docker).
 
 **Fixture accounts:** `rare-api/rareapi/fixtures/initial_data.json` seeds 13 users. Staff accounts: `admin_sarah`, `admin_marcus`.
 
+## Commit Messages
+
+Follow the conventional commit format:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+```
+
+Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`
+
+- Keep the description under 72 characters.
+- Do not include `Co-Authored-By` lines.
+
+## Pull Requests
+
+When creating a PR with `gh pr create`, use this format:
+
+**Title:** `<type>[optional scope]: <description>`
+
+**Body:**
+```
+## What changed
+<1-3 bullet points describing the change>
+
+## Why
+<reason for the change>
+
+## How to test
+<steps to verify the change works>
+```
+
 ## Architecture Docs
 
 Detailed diagrams live in `rare-api/docs/`:
