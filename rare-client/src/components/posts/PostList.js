@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { getAllPosts } from "../../managers/PostManager"
+import { getAllPosts, getMyPosts } from "../../managers/PostManager"
 import { getCategories } from "../../managers/CategoryManager"
 import { getTags } from "../../managers/TagManager"
 
@@ -12,9 +12,14 @@ export const PostList = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    getAllPosts().then(setPosts)
-    getCategories().then(setCategories)
-    getTags().then(setTags)
+    Promise.all([getAllPosts(), getMyPosts(), getCategories(), getTags()]).then(
+      ([approved, mine, cats, allTags]) => {
+        const pending = mine.filter(p => !p.approved)
+        setPosts([...pending, ...approved])
+        setCategories(cats)
+        setTags(allTags)
+      }
+    )
   }, [])
 
   const filteredPosts = selectedCategory
@@ -64,6 +69,9 @@ export const PostList = () => {
             <tr key={post.id}>
               <td>
                 <Link to={`/posts/${post.id}`}>{post.title}</Link>
+                {!post.approved && (
+                  <span className="tag is-warning ml-2">Pending Review</span>
+                )}
               </td>
               <td>{post.user.username}</td>
               <td>{post.category ? post.category.label : "—"}</td>
