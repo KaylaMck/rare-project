@@ -5,6 +5,7 @@ import { getCategories } from "../../managers/CategoryManager"
 
 export const PostCreate = () => {
   const [categories, setCategories] = useState([])
+  const [pendingPostId, setPendingPostId] = useState(null)
   const titleRef = useRef()
   const categoryRef = useRef()
   const fileRef = useRef()
@@ -23,14 +24,37 @@ export const PostCreate = () => {
       content: contentRef.current.value,
     }).then(post => {
       const file = fileRef.current.files[0]
+      const finish = () => {
+        if (!post.approved) {
+          setPendingPostId(post.id)
+        } else {
+          navigate(`/posts/${post.id}`)
+        }
+      }
       if (file) {
         const formData = new FormData()
         formData.append("image", file)
-        uploadPostImage(post.id, formData).then(() => navigate(`/posts/${post.id}`))
+        uploadPostImage(post.id, formData).then(finish)
       } else {
-        navigate(`/posts/${post.id}`)
+        finish()
       }
     })
+  }
+
+  if (pendingPostId) {
+    return (
+      <section className="section">
+        <div className="container">
+          <div className="notification is-warning">
+            <p className="has-text-weight-semibold">Your post has been submitted for review.</p>
+            <p>It will appear publicly once an admin approves it.</p>
+          </div>
+          <button className="button is-primary" onClick={() => navigate(`/posts/${pendingPostId}`)}>
+            View Post
+          </button>
+        </div>
+      </section>
+    )
   }
 
   return (
