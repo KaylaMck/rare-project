@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: rare
+      POSTGRES_USER: rare_user
+      POSTGRES_PASSWORD: rare_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - rare_db_data:/var/lib/postgresql/data
+
+volumes:
+  rare_db_data:
